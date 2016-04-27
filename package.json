@@ -1,0 +1,63 @@
+{
+  "name": "npm-sass",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm install && npm run dev -s",
+    "clean": "rm -rfv app && mkdir app",
+    "lint": "eslint --ignore-pattern src/assets,src/scss src/**",
+    "prebuild-js": "mkdir -p app/js",
+    "build-js": "echo '=> build-js' && browserify src/app.js -d -o app/js/main.js",
+    "prewatch-js": "mkdir -p app/js",
+    "watch-js": "echo '=> watchify-js' && watchify src/app.js -d -o app/js/main.js",
+    "preminify-js": "mkdir -p app/js",
+    "minify-js": "echo '=> minify-js' && browserify src/app.js -d -p [minifyify --map main.map.json --output app/js/main.map.json] > app/js/main.js",
+    "build-ng-tpls": "npm-html2js -i 'src/states/**/*.tpl.html' -o 'app/js/templates.js' -m 'tpls' -b 'src/states'",
+    "minify-ng-tpls": "npm-html2js -i 'src/states/**/*.tpl.html' -o 'app/js/templates.js' -m 'tpls' -b 'src/states' --minify",
+    "build-css": "echo '=> build-css' && node-sass --precision 10 --source-map-embed src/scss/main.scss app/css/main.css",
+    "watch-css": "nodemon -w src --ignore src/assets -e scss -x 'npm run build-css -s'",
+    "preminify-css": "mkdir -p app/css",
+    "minify-css": "echo '=> minify-css' && node-sass --precision 10 src/scss/main.scss | cleancss --source-map -o app/css/main.min.css -d",
+    "copy-assets": "echo '=> copy-assets' && cp -rf src/assets/ app",
+    "watch-assets": "watch 'npm run copy-assets -s' src/assets",
+    "copy-html": "echo '=> copy html' && cp src/*.html app",
+    "watch-html": "nodemon -w src --ignore src/assets -e index.html -x 'npm run copy-html -s'",
+    "prebuild": "npm run clean -s",
+    "build": "echo '=> build the project' && npm run copy-assets -s && npm run build-js -s && npm run build-css -s",
+    "watch": "parallelshell 'npm run watch-js -s' 'npm run watch-css -s' 'npm run watch-assets -s' 'npm run watch-html -s'",
+    "browser-sync": "browser-sync start --files 'app/*' --server app",
+    "predev": "npm run clean -s",
+    "dev": "parallelshell 'npm run watch -s' 'npm run browser-sync -s'",
+    "preprod": "npm run clean -s",
+    "prod": "echo '=> compile for production' && npm run copy-assets -s && npm run minify-js -s && npm run minify-css -s"
+  },
+  "dependencies": {
+    "angular": "^1.4.9",
+    "angular-bootstrap": "^0.12.2",
+    "angular-ui-router": "^0.2.17",
+    "bootstrap-sass": "^3.3.6"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.11.1",
+    "browserify": "^13.0.0",
+    "browserify-ngannotate": "^2.0.0",
+    "clean-css": "^3.4.9",
+    "eslint": "^1.10.3",
+    "minifyify": "^7.2.1",
+    "node-sass": "^3.4.2",
+    "nodemon": "^1.8.1",
+    "npm-html2js": "^0.1.8",
+    "parallelshell": "^2.0.0",
+    "watch": "^0.17.1",
+    "watchify": "^3.7.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "browserify-ngannotate",
+        {
+          "ext": ".js"
+        }
+      ]
+    ]
+  }
+}

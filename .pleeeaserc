@@ -1,0 +1,13 @@
+{
+    browsers: ['last 2 versions', '> 2%'],
+    rem: ['16px'],
+    pseudoElements: true,
+    mqpacker: true,
+    minifier: !devBuild,
+    sourcemaps: {
+        map: {
+            inline: false
+        }
+    },
+    out: 'main.min.css'
+}
